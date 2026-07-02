@@ -1,0 +1,258 @@
+{
+  "info": {
+    "_postman_id": "5cee4d3e-aadb-470d-9041-b4e384d8403a",
+    "name": "Email Queue System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "44963830",
+    "_collection_link": "https://go.postman.co/collection/44963830-5cee4d3e-aadb-470d-9041-b4e384d8403a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "health",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/health",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "54"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"36-vOK4TB8g/CtQMPE5nTxm0kNR6YU\""
+            },
+            {
+              "key": "Date",
+              "value": "Fri, 17 Apr 2026 10:44:54 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"status\": \"ok\",\n    \"timestamp\": \"2026-04-17T10:44:54.150Z\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "sendEmail",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"to\": \"your@email.com\",\r\n  \"subject\": \"Test Email\",\r\n  \"body\": \"Hello from the queue\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/email/send",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "email",
+            "send"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "sendEmail",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"to\": \"your@email.com\",\r\n  \"subject\": \"Test Email\",\r\n  \"body\": \"Hello from the queue\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/email/send",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "email",
+                "send"
+              ]
+            }
+          },
+          "status": "Accepted",
+          "code": 202,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "66"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"42-5LBFZj2+HR0OhsHCc1up66Qrns8\""
+            },
+            {
+              "key": "Date",
+              "value": "Fri, 17 Apr 2026 10:46:13 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"success\": true,\n    \"message\": \"Email queued successfully\",\n    \"jobId\": \"1\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "checkStatus",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/email/status/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "email",
+            "status",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "checkStatus-e",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/email/status/3",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "email",
+                "status",
+                "3"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "454"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"1c6-aaqoFW9rIV/zAKn7+gRt/07ciTQ\""
+            },
+            {
+              "key": "Date",
+              "value": "Fri, 17 Apr 2026 10:47:15 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"success\": true,\n    \"data\": {\n        \"job_id\": \"1\",\n        \"to\": \"your@email.com\",\n        \"subject\": \"Test Email\",\n        \"status\": \"failed\",\n        \"attempts\": 3,\n        \"error\": \"Email send failed: You can only send testing emails to your own email address (siddhi.singh561@gmail.com). To send emails to other recipients, please verify a domain at resend.com/domains, and change the `from` address to an email using this domain.\",\n        \"created_at\": \"2026-04-17T10:46:11.511Z\",\n        \"updated_at\": \"2026-04-17T10:46:32.963Z\"\n    }\n}"
+        }
+      ]
+    }
+  ]
+}

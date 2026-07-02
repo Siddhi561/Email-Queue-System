@@ -1,0 +1,28 @@
+{
+  "name": "job_queue",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+  "start": "node --env-file=.env src/app.js",
+  "worker": "node --env-file=.env src/workers/emailWorker.js",
+  "dev": "node --env-file=.env --watch src/app.js",
+  "dev:worker": "node --env-file=.env --watch src/workers/emailWorker.js",
+  "dev:all": "concurrently \"npm run dev\" \"npm run dev:worker\""
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bullmq": "^5.73.5",
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "ioredis": "^5.10.1",
+    "pg": "^8.20.0",
+    "resend": "^6.11.0",
+    "winston": "^3.19.0",
+    "zod": "^4.3.6"
+  }
+}

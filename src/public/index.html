@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Email Queue Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f4f4f5;
+      color: #18181b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e4e4e7;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header h1 { font-size: 16px; font-weight: 600; }
+    header p { font-size: 13px; color: #71717a; }
+
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e;
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      width: 100%;
+      max-width: 900px;
+      justify-content: center;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e4e4e7;
+      border-radius: 12px;
+      padding: 24px;
+      flex: 1 1 340px;
+      min-width: 280px;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #18181b;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 4px; }
+
+    label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #71717a;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #e4e4e7;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #18181b;
+      background: #fafafa;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #a1a1aa;
+      background: #fff;
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #18181b;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-top: 4px;
+    }
+
+    button:hover { background: #3f3f46; }
+    button:disabled { background: #a1a1aa; cursor: not-allowed; }
+
+    .rate-info {
+      font-size: 12px;
+      color: #a1a1aa;
+      text-align: center;
+      min-height: 16px;
+    }
+
+    .result-box {
+      border: 1px solid #e4e4e7;
+      border-radius: 8px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      font-size: 13px;
+      border-bottom: 1px solid #f4f4f5;
+    }
+
+    .result-row:last-child { border-bottom: none; }
+    .result-label { color: #71717a; }
+    .result-value { font-weight: 500; color: #18181b; }
+
+    .status-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+    }
+
+    .status-queued   { background: #f4f4f5; color: #71717a; }
+    .status-processing { background: #dbeafe; color: #1d4ed8; }
+    .status-completed  { background: #dcfce7; color: #15803d; }
+    .status-failed     { background: #fee2e2; color: #dc2626; }
+
+    .hint {
+      font-size: 12px;
+      color: #a1a1aa;
+      text-align: center;
+      padding: 10px 14px;
+      border-top: 1px solid #f4f4f5;
+    }
+
+    .error-box {
+      background: #fff5f5;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #dc2626;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="dot"></div>
+  <div>
+    <h1>Email Queue Dashboard</h1>
+    <p>Send emails via job queue and track delivery status</p>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+
+    <!-- Send Card -->
+    <div class="card">
+      <div class="card-title">Send Email</div>
+
+      <div class="field">
+        <label>To</label>
+        <input type="email" id="to" placeholder="recipient@email.com" />
+      </div>
+
+      <div class="field">
+        <label>Subject</label>
+        <input type="text" id="subject" placeholder="Email subject" />
+      </div>
+
+      <div class="field">
+        <label>Body</label>
+        <textarea id="body" placeholder="Email body..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Priority</label>
+        <select id="priority">
+          <option value="1">1 — Urgent (password reset)</option>
+          <option value="5">5 — High</option>
+          <option value="10" selected>10 — Normal</option>
+        </select>
+      </div>
+
+      <button id="sendBtn" onclick="sendEmail()">Send Email</button>
+      <div class="rate-info" id="rateInfo"></div>
+      <div class="error-box" id="sendError"></div>
+
+      <div class="result-box" id="sendResult">
+        <div class="result-row">
+          <span class="result-label">Status</span>
+          <span class="status-badge status-queued" id="sendStatus">QUEUED</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Job ID</span>
+          <span class="result-value" id="sendJobId">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Priority</span>
+          <span class="result-value" id="sendPriority">—</span>
+        </div>
+        <div class="hint">Job ID auto-filled below — click Check Status to track</div>
+      </div>
+    </div>
+
+    <!-- Status Card -->
+    <div class="card">
+      <div class="card-title">Check Job Status</div>
+
+      <div class="field">
+        <label>Job ID</label>
+        <input type="text" id="jobId" placeholder="e.g. 6" />
+      </div>
+
+      <button onclick="checkStatus()">Check Status</button>
+      <div class="error-box" id="statusError"></div>
+
+      <div class="result-box" id="statusResult">
+        <div class="result-row">
+          <span class="result-label">Status</span>
+          <span class="status-badge" id="statusBadge">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">To</span>
+          <span class="result-value" id="statusTo">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Subject</span>
+          <span class="result-value" id="statusSubject">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Attempts</span>
+          <span class="result-value" id="statusAttempts">—</span>
+        </div>
+        <div class="result-row" id="statusErrorRow" style="display:none;">
+          <span class="result-label">Error</span>
+          <span class="result-value" style="color:#dc2626;" id="statusErrorMsg">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Created</span>
+          <span class="result-value" id="statusCreated">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Updated</span>
+          <span class="result-value" id="statusUpdated">—</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  const priorityLabels = { 1: 'Urgent', 5: 'High', 10: 'Normal' };
+
+  async function sendEmail() {
+    const btn = document.getElementById('sendBtn');
+    const to = document.getElementById('to').value.trim();
+    const subject = document.getElementById('subject').value.trim();
+    const body = document.getElementById('body').value.trim();
+    const priority = parseInt(document.getElementById('priority').value);
+    const errorEl = document.getElementById('sendError');
+    const resultEl = document.getElementById('sendResult');
+
+    errorEl.style.display = 'none';
+    resultEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    try {
+      const res = await fetch('/api/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to, subject, body, priority }),
+      });
+
+      const remaining = res.headers.get('X-RateLimit-Remaining');
+      if (remaining !== null) {
+        document.getElementById('rateInfo').textContent =
+          `${remaining} requests remaining this minute`;
+      }
+
+      const data = await res.json();
+
+      if (!data.success) {
+        errorEl.style.display = 'block';
+        if (data.issues) {
+          errorEl.innerHTML = data.issues.map(i => `${i.field}: ${i.message}`).join('<br>');
+        } else {
+          errorEl.textContent = data.error || 'Something went wrong';
+        }
+        return;
+      }
+
+      document.getElementById('sendJobId').textContent = data.jobId;
+      document.getElementById('sendPriority').textContent =
+        `${data.priority} — ${priorityLabels[data.priority] || 'Custom'}`;
+      resultEl.style.display = 'block';
+
+      if (data.jobId) {
+        document.getElementById('jobId').value = data.jobId;
+      }
+
+    } catch (err) {
+      errorEl.style.display = 'block';
+      errorEl.textContent = 'Network error: ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send Email';
+    }
+  }
+
+  async function checkStatus() {
+    const jobId = document.getElementById('jobId').value.trim();
+    const errorEl = document.getElementById('statusError');
+    const resultEl = document.getElementById('statusResult');
+
+    errorEl.style.display = 'none';
+    resultEl.style.display = 'none';
+
+    if (!jobId) {
+      errorEl.style.display = 'block';
+      errorEl.textContent = 'Enter a job ID first';
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/email/status/${jobId}`);
+      const data = await res.json();
+
+      if (!data.success) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = data.error || 'Job not found';
+        return;
+      }
+
+      const d = data.data;
+      const badge = document.getElementById('statusBadge');
+      badge.textContent = d.status.toUpperCase();
+      badge.className = `status-badge status-${d.status}`;
+
+      document.getElementById('statusTo').textContent = d.to;
+      document.getElementById('statusSubject').textContent = d.subject;
+      document.getElementById('statusAttempts').textContent = d.attempts;
+      document.getElementById('statusCreated').textContent =
+        new Date(d.created_at).toLocaleString();
+      document.getElementById('statusUpdated').textContent =
+        new Date(d.updated_at).toLocaleString();
+
+      const errRow = document.getElementById('statusErrorRow');
+      if (d.error) {
+        errRow.style.display = 'flex';
+        document.getElementById('statusErrorMsg').textContent = d.error;
+      } else {
+        errRow.style.display = 'none';
+      }
+
+      resultEl.style.display = 'block';
+
+    } catch (err) {
+      errorEl.style.display = 'block';
+      errorEl.textContent = 'Network error: ' + err.message;
+    }
+  }
+</script>
+</body>
+</html>
