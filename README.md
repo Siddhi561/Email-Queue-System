@@ -171,7 +171,7 @@ email-queue-system/
 ```bash
 # Clone and install
 git clone https://github.com/Siddhi561/Email-Queue-System
-cd email-queue-system
+cd Email-Queue-System
 npm install
 
 # Start Redis 7 via Docker (BullMQ requires Redis 5+)
