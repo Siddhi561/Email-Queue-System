@@ -170,7 +170,7 @@ email-queue-system/
 
 ```bash
 # Clone and install
-git clone <repo-url>
+git clone https://github.com/Siddhi561/Email-Queue-System
 cd email-queue-system
 npm install
 
