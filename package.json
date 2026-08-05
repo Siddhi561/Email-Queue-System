@@ -4,8 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-  "start": "node --env-file=.env src/app.js",
-  "worker": "node --env-file=.env src/workers/emailWorker.js",
+   "start": "node src/app.js",
+  "worker": "node src/workers/emailWorker.js",
   "dev": "node --env-file=.env --watch src/app.js",
   "dev:worker": "node --env-file=.env --watch src/workers/emailWorker.js",
   "dev:all": "concurrently \"npm run dev\" \"npm run dev:worker\""
